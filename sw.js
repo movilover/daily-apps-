@@ -1,9 +1,9 @@
 /* Daily Deal App — Service Worker
    নীতি: সবসময় আগে নেটওয়ার্ক (সর্বশেষ ফাইল), নেটওয়ার্ক না থাকলে ক্যাশ।
    তাই ফাইল আপডেট করলে ইউজার পরের বার খুললেই নতুন ভার্সন পাবে। */
-const CACHE = 'dd-app-v3';
-const PRECACHE = ['./', 'index.html', 'admin-app.html', 'app-shell.js', 'shell.css', 'config.js',
-  'manifest.webmanifest', 'admin-manifest.webmanifest', 'logo-splash.png', 'admin-logo-splash.png',
+const CACHE = 'dd-app-v4';
+const PRECACHE = ['./', 'index.html', 'admin-app.html', 'app-shell.js', 'app-shell.css', 'config.js',
+  'manifest.webmanifest', 'admin-manifest.webmanifest', 'splash-bag.png', 'splash-name.png', 'admin-splash-bag.png', 'admin-splash-name.png',
   'icon-192.png', 'admin-icon-192.png', 'app-bridge.js', 'site-user.html', 'admin.html'];
 
 self.addEventListener('install', (e) => {
