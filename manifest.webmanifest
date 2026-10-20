@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "Daily Deal",
+  "short_name": "Daily Deal",
+  "description": "Daily Deal — বিশ্বস্ত অনলাইন শপিং",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "./?iv=1",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0b0a09",
+  "theme_color": "#0b0a09",
+  "categories": ["shopping"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
