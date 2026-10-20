@@ -40,7 +40,7 @@ jobs:
           KS_PASS_SECRET: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           if [ -n "$KS_B64" ]; then
-            echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "$KS_B64" \vert{} base64 -d > "$RUNNER_TEMP/release.jks"
             echo "KS_PASS=$KS_PASS_SECRET" >> $GITHUB_ENV
           else
             echo "::warning::KEYSTORE_BASE64 secret নেই — অস্থায়ী কী দিয়ে সাইন হচ্ছে। এই APK-র ওপর আপডেট ইনস্টল হবে না, আগে আনইনস্টল করতে হবে।"
@@ -59,6 +59,10 @@ jobs:
           APP_URL_VAR: ${{ vars.APP_URL }}
         run: |
           set -e
+          
+          # ইমেজ ম্যাজিক ইনস্টল করা হচ্ছে (convert কমান্ডের জন্য)
+          sudo apt-get update && sudo apt-get install -y imagemagick
+
           OWNER="${GITHUB_REPOSITORY_OWNER,,}"
           REPO="${GITHUB_REPOSITORY#*/}"
           BASE="${APP_URL_VAR:-https://$OWNER.github.io/$REPO/}"
@@ -68,7 +72,7 @@ jobs:
           HOST=$(echo "$BASE" | sed -E 's#https://([^/]+)/.*#\1#')
           echo "START_URL=$START"
           mkdir -p android && cd android
-          PKGDIR="app/src/main/java/$(echo $PKG | tr . /)"
+          PKGDIR="app/src/main/java/$(echo$PKG | tr . /)"
           mkdir -p "$PKGDIR" app/src/main/res/mipmap-anydpi-v26 app/src/main/res/mipmap-xxxhdpi app/src/main/res/drawable app/src/main/res/values
 
           cat > settings.gradle <<'EOF'
@@ -167,137 +171,4 @@ jobs:
 
           # আইকন: রেপোর PNG থেকে
           cp "../${ICONP}icon-192.png" app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          convert "../${ICONP}maskable-512.png" -resize 330x330 -background '#0c0b0a' -gravity center -extent 432x432 app/src/main/res/drawable/ic_fg.png
-
-          cat > "$PKGDIR/MainActivity.java" <<'EOF'
-          package __PKG__;
-
-          import android.app.Activity;
-          import android.content.ActivityNotFoundException;
-          import android.content.Intent;
-          import android.net.Uri;
-          import android.os.Bundle;
-          import android.os.Message;
-          import android.view.View;
-          import android.webkit.*;
-
-          public class MainActivity extends Activity {
-            static final String START_URL = "__START__";
-            static final String HOST = "__HOST__";
-            WebView web;
-            ValueCallback<Uri[]> fileCb;
-            static final int REQ_FILE = 11;
-
-            @Override protected void onCreate(Bundle b) {
-              super.onCreate(b);
-              web = new WebView(this);
-              web.setBackgroundColor(0xFF0B0A09);
-              setContentView(web);
-              WebSettings s = web.getSettings();
-              s.setJavaScriptEnabled(true);
-              s.setDomStorageEnabled(true);
-              s.setDatabaseEnabled(true);
-              s.setAllowFileAccess(false);
-              s.setAllowContentAccess(false);
-              s.setMediaPlaybackRequiresUserGesture(false);
-              s.setJavaScriptCanOpenWindowsAutomatically(true);
-              s.setSupportMultipleWindows(true);
-              s.setCacheMode(WebSettings.LOAD_DEFAULT);
-              s.setUseWideViewPort(true);
-              s.setLoadWithOverviewMode(true);
-              s.setUserAgentString(s.getUserAgentString() + " DDApp/1");
-              web.setOverScrollMode(View.OVER_SCROLL_NEVER);
-              CookieManager.getInstance().setAcceptCookie(true);
-              CookieManager.getInstance().setAcceptThirdPartyCookies(web, true);
-
-              web.setDownloadListener((url, ua, cd, mime, len) -> openExternal(url));
-              web.setWebViewClient(new WebViewClient() {
-                @Override public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
-                  Uri u = r.getUrl();
-                  String sc = u.getScheme() == null ? "" : u.getScheme();
-                  if (!sc.equals("http") && !sc.equals("https")) { openExternal(u.toString()); return true; }
-                  if (r.isForMainFrame() && !HOST.equalsIgnoreCase(u.getHost())) { openExternal(u.toString()); return true; }
-                  return false;
-                }
-                @Override public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
-                  if (r.isForMainFrame()) {
-                    v.loadDataWithBaseURL(null,
-                      "<body style='background:#0b0a09;color:#fff;font-family:sans-serif;text-align:center;padding-top:30vh'>" +
-                      "<h3>ইন্টারনেট সংযোগ নেই</h3><button style='padding:12px 22px;border:0;border-radius:12px;background:#ff4d12;color:#fff;font-size:16px' " +
-                      "onclick=\"location.href='" + START_URL + "'\">আবার চেষ্টা করুন</button></body>",
-                      "text/html", "utf-8", null);
-                  }
-                }
-              });
-              web.setWebChromeClient(new WebChromeClient() {
-                @Override public boolean onCreateWindow(WebView v, boolean dialog, boolean gesture, Message msg) {
-                  WebView tmp = new WebView(MainActivity.this);
-                  tmp.setWebViewClient(new WebViewClient() {
-                    @Override public boolean shouldOverrideUrlLoading(WebView w, WebResourceRequest r) {
-                      openExternal(r.getUrl().toString()); w.destroy(); return true;
-                    }
-                  });
-                  ((WebView.WebViewTransport) msg.obj).setWebView(tmp);
-                  msg.sendToTarget();
-                  return true;
-                }
-                @Override public boolean onShowFileChooser(WebView w, ValueCallback<Uri[]> cb, FileChooserParams p) {
-                  if (fileCb != null) fileCb.onReceiveValue(null);
-                  fileCb = cb;
-                  try { startActivityForResult(p.createIntent(), REQ_FILE); }
-                  catch (ActivityNotFoundException e) { fileCb = null; return false; }
-                  return true;
-                }
-              });
-
-              if (b != null) web.restoreState(b); else web.loadUrl(START_URL);
-            }
-
-            void openExternal(String url) {
-              try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); } catch (Exception ignored) {}
-            }
-
-            @Override protected void onActivityResult(int req, int res, Intent data) {
-              if (req == REQ_FILE && fileCb != null) {
-                fileCb.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(res, data));
-                fileCb = null;
-              } else super.onActivityResult(req, res, data);
-            }
-            @Override protected void onSaveInstanceState(Bundle o) { super.onSaveInstanceState(o); web.saveState(o); }
-            @Override protected void onResume() { super.onResume(); web.onResume(); }
-            @Override protected void onPause() { web.onPause(); super.onPause(); }
-            @Override public void onBackPressed() { if (web.canGoBack()) web.goBack(); else super.onBackPressed(); }
-          }
-          EOF
-          sed -i 's/^          //' "$PKGDIR/MainActivity.java"
-          sed -i "s#__PKG__#$PKG#; s#__START__#$START#; s#__HOST__#$HOST#" "$PKGDIR/MainActivity.java"
-
-      - name: Build release APK
-        working-directory: android
-        run: |
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          gradle assembleRelease --no-daemon --stacktrace
-          cp app/build/outputs/apk/release/app-release.apk "../${{ matrix.file }}"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.id }}-apk
-          path: ${{ matrix.file }}
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: apks
-          merge-multiple: true
-      - name: Publish release (স্থায়ী ডাউনলোড লিংক)
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release delete latest --cleanup-tag -y --repo "$GITHUB_REPOSITORY" || true
-          gh release create latest apks/*.apk --repo "$GITHUB_REPOSITORY" --title "Latest APK" \
-            --notes "ইউজার: DailyDeal.apk  |  অ্যাডমিন: DailyDeal-Admin.apk"
-          echo "ইউজার APK: https://github.com/$GITHUB_REPOSITORY/releases/download/latest/DailyDeal.apk"
-          echo "অ্যাডমিন APK: https://github.com/$GITHUB_REPOSITORY/releases/download/latest/DailyDeal-Admin.apk"
+          convert "../${ICONP}maskable
