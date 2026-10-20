@@ -223,6 +223,8 @@ jobs:
               s.setDatabaseEnabled(true);
               s.setAllowFileAccess(false);
               s.setAllowContentAccess(false);
+              s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+              s.setGeolocationEnabled(false);
               s.setMediaPlaybackRequiresUserGesture(false);
               s.setJavaScriptCanOpenWindowsAutomatically(true);
               s.setSupportMultipleWindows(true);
