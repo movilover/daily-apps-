@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.github.io; frame-src 'self' https://*.github.io; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0a09">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DD Admin">
+<title>Daily Deal Admin</title>
+<link rel="manifest" href="admin-manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="admin-favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="admin-favicon-48.png">
+<link rel="apple-touch-icon" href="admin-apple-touch-icon.png">
+<link rel="stylesheet" href="shell.css">
+</head>
+<body data-mode="admin" data-root="./" data-site="admin.html">
+<div id="frameBox"></div>
+
+<div id="splash"><img src="admin-logo-splash.png" alt="Daily Deal"><div class="ring"></div></div>
+
+<div id="err" class="overlay"><div class="card">
+  <img src="admin-icon-192.png" alt="">
+  <h2>লোড করা যায়নি</h2>
+  <p>ইন্টারনেট সংযোগ চেক করে আবার চেষ্টা করুন।</p>
+  <button id="retry" class="btn">আবার চেষ্টা করুন</button>
+</div></div>
+
+<div id="upd" class="overlay"><div class="card">
+  <img src="admin-icon-192.png" alt="">
+  <h2>নতুন আপডেট এসেছে</h2>
+  <p id="updMsg"></p>
+  <p id="updHelp" class="help" hidden>পুরনো অ্যাপ মুছে ব্রাউজার থেকে আবার "Install / Add to Home screen" করুন।</p>
+  <button id="updGo" class="btn">আপডেট করুন</button>
+  <button id="updLater" class="btn ghost">পরে</button>
+</div></div>
+
+<div id="snack"><span id="snackMsg"></span><button id="snackBtn" hidden></button></div>
+<div id="inst"><span>অ্যাপ হিসেবে ইনস্টল করুন</span><button id="instGo">ইনস্টল</button><button id="instX" class="x" aria-label="বন্ধ">✕</button></div>
+
+<script src="config.js"></script>
+<script src="shell.js"></script>
+</body>
+</html>

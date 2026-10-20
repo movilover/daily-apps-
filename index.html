@@ -11,28 +11,28 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DD Admin">
-<title>Daily Deal Admin</title>
+<meta name="apple-mobile-web-app-title" content="Daily Deal">
+<title>Daily Deal</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="../icons/admin-favicon-32.png">
-<link rel="icon" type="image/png" sizes="48x48" href="../icons/admin-favicon-48.png">
-<link rel="apple-touch-icon" href="../icons/admin-apple-touch-icon.png">
-<link rel="stylesheet" href="../shell.css">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="shell.css">
 </head>
-<body data-mode="admin" data-root="../">
+<body data-mode="user" data-root="./" data-site="site-user.html">
 <div id="frameBox"></div>
 
-<div id="splash"><img src="../icons/admin-logo-splash.png" alt="Daily Deal"><div class="ring"></div></div>
+<div id="splash"><img src="logo-splash.png" alt="Daily Deal"><div class="ring"></div></div>
 
 <div id="err" class="overlay"><div class="card">
-  <img src="../icons/admin-icon-192.png" alt="">
+  <img src="icon-192.png" alt="">
   <h2>লোড করা যায়নি</h2>
   <p>ইন্টারনেট সংযোগ চেক করে আবার চেষ্টা করুন।</p>
   <button id="retry" class="btn">আবার চেষ্টা করুন</button>
 </div></div>
 
 <div id="upd" class="overlay"><div class="card">
-  <img src="../icons/admin-icon-192.png" alt="">
+  <img src="icon-192.png" alt="">
   <h2>নতুন আপডেট এসেছে</h2>
   <p id="updMsg"></p>
   <p id="updHelp" class="help" hidden>পুরনো অ্যাপ মুছে ব্রাউজার থেকে আবার "Install / Add to Home screen" করুন।</p>
@@ -43,7 +43,7 @@
 <div id="snack"><span id="snackMsg"></span><button id="snackBtn" hidden></button></div>
 <div id="inst"><span>অ্যাপ হিসেবে ইনস্টল করুন</span><button id="instGo">ইনস্টল</button><button id="instX" class="x" aria-label="বন্ধ">✕</button></div>
 
-<script src="../config.js"></script>
-<script src="../shell.js"></script>
+<script src="config.js"></script>
+<script src="shell.js"></script>
 </body>
 </html>
