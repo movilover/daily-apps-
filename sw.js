@@ -1,8 +1,8 @@
 /* Daily Deal App — Service Worker
    নীতি: সবসময় আগে নেটওয়ার্ক (সর্বশেষ ফাইল), নেটওয়ার্ক না থাকলে ক্যাশ।
    তাই ফাইল আপডেট করলে ইউজার পরের বার খুললেই নতুন ভার্সন পাবে। */
-const CACHE = 'dd-app-v2';
-const PRECACHE = ['./', 'index.html', 'admin-app.html', 'shell.js', 'shell.css', 'config.js',
+const CACHE = 'dd-app-v3';
+const PRECACHE = ['./', 'index.html', 'admin-app.html', 'app-shell.js', 'shell.css', 'config.js',
   'manifest.webmanifest', 'admin-manifest.webmanifest', 'logo-splash.png', 'admin-logo-splash.png',
   'icon-192.png', 'admin-icon-192.png', 'app-bridge.js', 'site-user.html', 'admin.html'];
 
