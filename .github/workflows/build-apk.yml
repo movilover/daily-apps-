@@ -156,10 +156,12 @@ jobs:
           </resources>
           EOF
           sed -i 's/^          //' app/src/main/res/values/styles.xml
+
           cat > app/src/main/res/values/colors.xml <<'EOF'
           <resources><color name="ic_bg">#0C0B0A</color></resources>
           EOF
           sed -i 's/^          //' app/src/main/res/values/colors.xml
+
           cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
@@ -173,7 +175,7 @@ jobs:
           cp "../${ICONP}icon-192.png" app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
           convert "../${ICONP}maskable-512.png" -resize 330x330 -background '#0c0b0a' -gravity center -extent 432x432 app/src/main/res/drawable/ic_fg.png
 
-          cat > "$PKGDIR/MainActivity.java" <<'EOF'
+          cat << 'JAVACEOF' > "$PKGDIR/MainActivity.java"
           package __PKG__;
 
           import android.app.Activity;
@@ -272,8 +274,8 @@ jobs:
             @Override protected void onPause() { web.onPause(); super.onPause(); }
             @Override public void onBackPressed() { if (web.canGoBack()) web.goBack(); else super.onBackPressed(); }
           }
-          EOF
-          sed -i 's/^          //' "$PKGDIR/MainActivity.java"
+          JAVACEOF
+
           sed -i "s#__PKG__#$PKG#; s#__START__#$START#; s#__HOST__#$HOST#" "$PKGDIR/MainActivity.java"
 
       - name: Build release APK
